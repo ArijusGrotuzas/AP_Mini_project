@@ -3,6 +3,8 @@ import time
 import keyboard
 import numpy as np
 import sounddevice as sd
+
+from GUI import GraphicalUserInterface
 from String import GuitarString
 
 
@@ -21,14 +23,16 @@ class PlaybackThread(threading.Thread):
                 time.sleep(0.1)
             except:
                 print("error")
+                break
 
     def play(self):
         sd.play(self.sound)
         status = sd.wait()
 
 
+image = "guitar_design.png"
 frequencies = [55, 58, 62, 65, 69, 73, 78, 82, 87, 92, 98, 104]
-buttons = ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'z', 'x', 'c']
+buttons = ["A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"]
 sampling_frequency = 48000
 
 string_objects = []
@@ -42,8 +46,15 @@ for i in frequencies:
 for i in string_objects:
     sounds.append(np.array(i.get_string()))
 
+gui = GraphicalUserInterface(sounds, image, buttons, "Guitar synthesizer")
+
+gui.show_gui()
+
+
+"""
 for i in range(len(buttons)):
     t = PlaybackThread(sounds[i], buttons[i])
     t.start()
 
 print("done")
+"""
