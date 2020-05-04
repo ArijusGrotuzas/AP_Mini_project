@@ -2,24 +2,25 @@ import threading
 import time
 import keyboard
 import numpy as np
-from queue import Queue
-import matplotlib.pyplot as plt
 import sounddevice as sd
 from String import GuitarString
 
+
 class PlaybackThread(threading.Thread):
-    def __init__(self, sound):
+    def __init__(self, sound, key):
         threading.Thread.__init__(self)
         self.sound = sound
-        self.daemon = True
+        self.key = key
+        # self.daemon = True
 
     def run(self):
         while True:
             try:
-                message = self.queue.get()
-                self.play()
+                if keyboard.is_pressed(self.key):  # if key 'q' is pressed
+                    self.play()
+                time.sleep(0.1)
             except:
-                break
+                print("error")
 
     def play(self):
         sd.play(self.sound)
@@ -27,6 +28,7 @@ class PlaybackThread(threading.Thread):
 
 
 frequencies = [55, 58, 62, 65, 69, 73, 78, 82, 87, 92, 98, 104]
+buttons = ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'z', 'x', 'c']
 sampling_frequency = 48000
 
 string_objects = []
@@ -40,29 +42,8 @@ for i in frequencies:
 for i in string_objects:
     sounds.append(np.array(i.get_string()))
 
-thread1 = PlaybackThread(sounds[1])
-thread2 = PlaybackThread(sounds[2])
-thread3 = PlaybackThread(sounds[3])
+for i in range(len(buttons)):
+    t = PlaybackThread(sounds[i], buttons[i])
+    t.start()
 
-thread1.start()
-thread2.start()
-thread3.start()
-"""
-for i in sounds:
-    sd.play(i)
-    status = sd.wait()
-"""
-
-while True:  # making a loop
-    try:  # used try so that if user pressed other than the given key error will not be shown
-        if keyboard.is_pressed('a'):  # if key 'q' is pressed
-            thread1.queue.put("do")
-
-        elif keyboard.is_pressed('s'):
-            thread2.queue.put("do")
-
-        elif keyboard.is_pressed('d'):
-            thread3.queue.put("do")
-
-    except:
-        print("something")
+print("done")
