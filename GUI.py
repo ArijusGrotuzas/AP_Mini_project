@@ -23,8 +23,8 @@ class GraphicalUserInterface:
         # imagePanel.pack(side=LEFT, fill="both")
 
         for i in range(len(self.buttons)):
-            self.buttons[i] = Button(self.mainwindow, text=self.buttons[i], bg="Orange", bd=6, activebackground="Grey",
-                                     height=2, width=5,
+            self.buttons[i] = Button(self.mainwindow, text=self.buttons[i], bg="Brown", bd=6, activebackground="Grey",
+                                     height=1, width=50,
                                      command=partial(self.play_sound, self.sounds[i]))
             self.buttons[i].pack(side=TOP, expand="yes")
 
