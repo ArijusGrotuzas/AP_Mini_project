@@ -4,6 +4,7 @@ import keyboard
 import numpy as np
 import sounddevice as sd
 
+from PIL import Image
 from GUI import GraphicalUserInterface
 from String import GuitarString
 
@@ -30,7 +31,7 @@ class PlaybackThread(threading.Thread):
         status = sd.wait()
 
 
-image = "guitar_design.png"
+image = Image.open("guitar_design.jpg")
 frequencies = [55, 58, 62, 65, 69, 73, 78, 82, 87, 92, 98, 104]
 buttons = ["A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"]
 sampling_frequency = 48000
