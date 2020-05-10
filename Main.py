@@ -1,6 +1,3 @@
-import threading
-import time
-import keyboard
 import numpy as np
 import sounddevice as sd
 
@@ -8,54 +5,33 @@ from PIL import Image
 from GUI import GraphicalUserInterface
 from String import GuitarString
 
+sd.default.latency = 'low'
 
-class PlaybackThread(threading.Thread):
-    def __init__(self, sound, key):
-        threading.Thread.__init__(self)
-        self.sound = sound
-        self.key = key
-        # self.daemon = True
+"""Opening images for GUI"""
+back_image = Image.open("guitar_design.jpg")
+string_image = Image.open("string.jpg")
 
-    def run(self):
-        while True:
-            try:
-                if keyboard.is_pressed(self.key):  # if key 'q' is pressed
-                    self.play()
-                time.sleep(0.1)
-            except:
-                print("error")
-                break
+frequencies = [55, 62, 65, 73, 82, 87, 98]  # Frequencies of the string notes
+buttons = ["A", "B", "C", "D", "E", "F", "G"]  # String notes
+sampling_frequency = 44100  # Sampling frequency
 
-    def play(self):
-        sd.play(self.sound)
-        status = sd.wait()
-
-
-image = Image.open("guitar_design.jpg")
-frequencies = [55, 58, 62, 65, 69, 73, 78, 82, 87, 92, 98, 104]
-buttons = ["A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"]
-sampling_frequency = 48000
-
+"""Lists for storing the synthesized sounds, and string objects"""
 string_objects = []
 sounds = []
 
+"""Making String objects, and synthesizing the random noise, and appending the objects to the list"""
 for i in frequencies:
     guitar_string = GuitarString(i, sampling_frequency, 1.2)
     guitar_string.karplus_strong_algorithm()
     string_objects.append(guitar_string)
 
+"""Retrieving the sounds from the string objects, and appending them to an array"""
+"""To pass later that array into GUI Object"""
 for i in string_objects:
     sounds.append(np.array(i.get_string()))
 
-gui = GraphicalUserInterface(sounds, image, buttons, "Guitar synthesizer")
+"""Creating an object of GUI and passing it the synthesized sounds"""
+gui = GraphicalUserInterface(sounds, back_image, string_image, buttons, "Guitar synthesizer")
 
+"""Displaying the GUI"""
 gui.show_gui()
-
-
-"""
-for i in range(len(buttons)):
-    t = PlaybackThread(sounds[i], buttons[i])
-    t.start()
-
-print("done")
-"""
